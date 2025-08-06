@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Retorno ao Serviço</title>
+    <!-- Inclui o Tailwind CSS para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilo personalizado para a fonte Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Cor de fundo suave */
+        }
+        /* Centraliza o conteúdo principal */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-white rounded-lg shadow-xl p-8 max-w-sm w-full mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+            Calculadora de Retorno
+        </h1>
+
+        <div class="mb-6 w-full">
+            <label for="startTime" class="block text-gray-700 text-sm font-semibold mb-2">
+                Horário de Início do Intervalo:
+            </label>
+            <input
+                type="time"
+                id="startTime"
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                value=""
+            >
+            <p class="text-xs text-gray-500 mt-1">Deixe em branco para usar o horário atual.</p>
+        </div>
+
+        <button
+            id="calculateBtn"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out w-full transform active:scale-95"
+        >
+            Calcular Horário de Retorno
+        </button>
+
+        <div id="result" class="mt-8 text-center bg-blue-50 p-6 rounded-lg w-full">
+            <p class="text-gray-700 text-lg mb-2">Seu horário de retorno será:</p>
+            <p id="returnTimeDisplay" class="text-blue-700 text-4xl font-extrabold"></p>
+        </div>
+    </div>
+
+    <script>
+        // Função para formatar um número com dois dígitos (ex: 5 -> 05)
+        function formatTwoDigits(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // Adiciona um listener de evento ao botão de cálculo
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const startTimeInput = document.getElementById('startTime').value;
+            let breakStartTime;
+
+            // Verifica se o usuário inseriu um horário de início
+            if (startTimeInput) {
+                // Se sim, usa o horário inserido
+                const [hours, minutes] = startTimeInput.split(':').map(Number);
+                breakStartTime = new Date(); // Cria uma nova data para hoje
+                breakStartTime.setHours(hours, minutes, 0, 0); // Define as horas e minutos
+            } else {
+                // Se não, usa o horário atual
+                breakStartTime = new Date();
+            }
+
+            // Define a duração do intervalo em minutos (1 hora e 12 minutos = 72 minutos)
+            const breakDurationMinutes = 72;
+
+            // Calcula o horário de retorno adicionando a duração do intervalo
+            const returnTime = new Date(breakStartTime.getTime() + breakDurationMinutes * 60 * 1000);
+
+            // Extrai as horas e minutos do horário de retorno
+            const returnHours = returnTime.getHours();
+            const returnMinutes = returnTime.getMinutes();
+
+            // Formata o horário para exibição (HH:MM)
+            const formattedReturnTime = `${formatTwoDigits(returnHours)}:${formatTwoDigits(returnMinutes)}`;
+
+            // Exibe o horário de retorno na interface
+            document.getElementById('returnTimeDisplay').textContent = formattedReturnTime;
+        });
+
+        // Define o horário atual no campo de input ao carregar a página
+        window.onload = function() {
+            const now = new Date();
+            const currentHours = formatTwoDigits(now.getHours());
+            const currentMinutes = formatTwoDigits(now.getMinutes());
+            document.getElementById('startTime').value = `${currentHours}:${currentMinutes}`;
+        };
+    </script>
+</body>
+</html>
+
